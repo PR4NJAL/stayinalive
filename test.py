@@ -59,7 +59,7 @@ class CPRAssistant:
         """Calculate Euclidean distance between two points"""
         return math.sqrt((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2)
     
-    def calibrate_chest_position(self, frame):
+    def calibrate_chest_position(self, frame): # TODO: Needs to be reworked to detect chest independent of frame size
         """Calibrate the chest center position"""
         height, width = frame.shape[:2]
         # Default chest position (center of frame, slightly above middle)
@@ -97,7 +97,7 @@ class CPRAssistant:
         center_y = sum(y_coords) / len(y_coords)
         return (int(center_x), int(center_y))
     
-    def detect_compression(self, hand_center):
+    def detect_compression(self, hand_center) -> None: # TODO: This needs to be reworked to changed camera perspective, it won't work with the current setup
         """Detect compression movement based on hand vertical movement"""
         current_time = time.time()
         
@@ -123,7 +123,7 @@ class CPRAssistant:
         
         self.hand_positions.append(hand_center)
     
-    def draw_guidance_overlay(self, frame):
+    def draw_guidance_overlay(self, frame): # TODO: This changes as well with respect to the detect_compression function to dynamically draw the chest point
         """Draw CPR guidance overlay on frame"""
         height, width = frame.shape[:2]
         
@@ -178,7 +178,7 @@ class CPRAssistant:
             feedback = "Position hands over chest center"
             color = self.colors['red']
             
-        # Rate feedback
+        # TODO: Rate feedback this changes as well with respect to the detect_compression function
         if self.current_rate > 0:
             if self.current_rate < 100:
                 rate_feedback = "COMPRESS FASTER!"
@@ -250,7 +250,7 @@ class CPRAssistant:
             
             # Process hand detections
             if results.multi_hand_landmarks and guidance_active:
-                for idx, hand_landmarks in enumerate(results.multi_hand_landmarks):
+                for _ ,hand_landmarks in enumerate(results.multi_hand_landmarks):
                     # Analyze hand placement
                     if self.calibrated:
                         accuracy, hand_center, distance = self.analyze_hand_placement(
@@ -338,7 +338,7 @@ def run_cpr_training():
         assistant.run()
     except Exception as e:
         print(f"Error running CPR assistant: {e}")
-        print("Make sure you have installed: pip install opencv-python mediapipe pygame numpy")
+        print("Make sure you have installed: opencv-python, mediapipe, pygame, numpy")
 
 if __name__ == "__main__":
     # Installation check
@@ -348,7 +348,7 @@ if __name__ == "__main__":
         import pygame
     except ImportError as e:
         print("Missing required packages. Please install:")
-        print("pip install opencv-python mediapipe pygame numpy")
+        print("opencv-python, mediapipe, pygame, numpy")
         exit(1)
     
     run_cpr_training()
