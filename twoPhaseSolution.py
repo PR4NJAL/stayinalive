@@ -588,10 +588,9 @@ if __name__ == "__main__":
         import cv2
         import mediapipe as mp
         import pygame
-        import numpy as np
     except ImportError as e:
         print("Missing required packages. Please install:")
-        print("pip install opencv-python mediapipe pygame numpy")
+        print("pip install opencv-python mediapipe pygame")
         exit(1)
     
     print("🫀 Advanced CPR Assistant Starting...")
