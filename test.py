@@ -1,11 +1,10 @@
 import cv2
 import mediapipe as mp
-import numpy as np
 import time
 import math
 from collections import deque
 import pygame
-import threading
+# import threading
 
 class CPRAssistant:
     def __init__(self):
@@ -347,7 +346,6 @@ if __name__ == "__main__":
         import cv2
         import mediapipe as mp
         import pygame
-        import numpy as np
     except ImportError as e:
         print("Missing required packages. Please install:")
         print("pip install opencv-python mediapipe pygame numpy")
