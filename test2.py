@@ -144,14 +144,14 @@ class AdvancedCPRAssistant:
         
         return (chest_center_x, chest_center_y), chest_width
     
-    def analyze_hand_positioning_overhead(self, hands_results, pose_results, frame_shape):
+    def analyze_hand_positioning_overhead(self, holistic_results, pose_results, frame_shape):
         """Analyze hand positioning from overhead view"""
-        if not pose_results or not pose_results.pose_landmarks:
+        if not holistic_results or not holistic_results.pose_landmarks:
             return "No person detected - position CPR recipient in frame"
         
         # Detect chest center from pose
         chest_center, chest_width = self.detect_chest_from_pose(
-            pose_results.pose_landmarks, frame_shape)
+            holistic_results.pose_landmarks, frame_shape)
         
         if not chest_center:
             return "Cannot detect chest - ensure person is visible"
@@ -159,13 +159,22 @@ class AdvancedCPRAssistant:
         self.detected_chest_center = chest_center
         self.chest_width = chest_width
         
-        if not hands_results or not hands_results.multi_hand_landmarks:
+        if not holistic_results or not holistic_results.left_hand_landmarks and not holistic_results.right_hand_landmarks:
             return "Position hands over chest center for CPR"
         
         # Analyze hand positions
         hand_centers = []
-        for hand_landmarks in hands_results.multi_hand_landmarks:
-            hand_center = self.get_hand_center(hand_landmarks, frame_shape[1], frame_shape[0])
+        
+        # Check for left hand
+        if holistic_results.left_hand_landmarks:
+            hand_center = self.get_hand_center(holistic_results.left_hand_landmarks, 
+                                             frame_shape[1], frame_shape[0])
+            hand_centers.append(hand_center)
+        
+        # Check for right hand
+        if holistic_results.right_hand_landmarks:
+            hand_center = self.get_hand_center(holistic_results.right_hand_landmarks, 
+                                             frame_shape[1], frame_shape[0])
             hand_centers.append(hand_center)
         
         # Calculate positioning accuracy
@@ -316,12 +325,12 @@ class AdvancedCPRAssistant:
         """Calculate Euclidean distance between two points"""
         return math.sqrt((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2)
     
-    def draw_overhead_overlay(self, frame, hands_results, pose_results):
+    def draw_overhead_overlay(self, frame, holistic_results, pose_results):
         """Draw overlay for overhead positioning mode"""
-        if pose_results and pose_results.pose_landmarks:
+        if holistic_results and holistic_results.pose_landmarks:
             # Draw pose landmarks (torso area)
             self.mp_draw.draw_landmarks(
-                frame, pose_results.pose_landmarks, 
+                frame, holistic_results.pose_landmarks, 
                 self.mp_pose.POSE_CONNECTIONS,
                 landmark_drawing_spec=self.mp_draw.DrawingSpec(color=(0, 255, 0), thickness=2),
                 connection_drawing_spec=self.mp_draw.DrawingSpec(color=(0, 255, 255), thickness=1)
@@ -346,14 +355,29 @@ class AdvancedCPRAssistant:
                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, self.colors['yellow'], 2)
         
         # Draw hand landmarks and positioning
-        if hands_results and hands_results.multi_hand_landmarks:
-            for idx, hand_landmarks in enumerate(hands_results.multi_hand_landmarks):
-                # Draw hand landmarks
+        if holistic_results:
+            # Draw left hand
+            if holistic_results.left_hand_landmarks:
                 self.mp_draw.draw_landmarks(
-                    frame, hand_landmarks, self.mp_hands.HAND_CONNECTIONS)
+                    frame, holistic_results.left_hand_landmarks, self.mp_hands.HAND_CONNECTIONS)
                 
-                # Draw hand center
-                hand_center = self.get_hand_center(hand_landmarks, frame.shape[1], frame.shape[0])
+                hand_center = self.get_hand_center(holistic_results.left_hand_landmarks, 
+                                                 frame.shape[1], frame.shape[0])
+                color = self.colors['green'] if self.positioning_accuracy > 70 else self.colors['red']
+                cv2.circle(frame, hand_center, 8, color, -1)
+                cv2.circle(frame, hand_center, 15, color, 2)
+                
+                # Draw connection to chest if detected
+                if self.detected_chest_center:
+                    cv2.line(frame, hand_center, self.detected_chest_center, color, 2)
+            
+            # Draw right hand
+            if holistic_results.right_hand_landmarks:
+                self.mp_draw.draw_landmarks(
+                    frame, holistic_results.right_hand_landmarks, self.mp_hands.HAND_CONNECTIONS)
+                
+                hand_center = self.get_hand_center(holistic_results.right_hand_landmarks, 
+                                                 frame.shape[1], frame.shape[0])
                 color = self.colors['green'] if self.positioning_accuracy > 70 else self.colors['red']
                 cv2.circle(frame, hand_center, 8, color, -1)
                 cv2.circle(frame, hand_center, 15, color, 2)
@@ -475,7 +499,7 @@ class AdvancedCPRAssistant:
                     # Use holistic for both pose and hands
                     holistic_results = self.holistic.process(frame_rgb)
                     
-                    # Analyze positioning
+                    # Analyze positioning (pass correct attributes)
                     feedback = self.analyze_hand_positioning_overhead(
                         holistic_results, holistic_results, frame.shape)
                     
@@ -564,8 +588,10 @@ if __name__ == "__main__":
         import cv2
         import mediapipe as mp
         import pygame
+        import numpy as np
     except ImportError as e:
-        print("Missing required packages. Please install:opencv-python, mediapipe, pygame, numpy")
+        print("Missing required packages. Please install:")
+        print("pip install opencv-python mediapipe pygame numpy")
         exit(1)
     
     print("🫀 Advanced CPR Assistant Starting...")
