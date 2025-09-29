@@ -13,7 +13,6 @@ stayinalive/
 ├── detection.py            # Pose and hand detection modules
 ├── analysis.py             # CPR analysis algorithms
 ├── visualization.py        # Drawing and overlay functions
-├── ui.py                   # Kivy UI components
 ├── enums.py                # Enumerations for modes and angles
 ├── config.py               # Configuration constants
 ├── requirements.txt        # Python dependencies
@@ -34,7 +33,6 @@ stayinalive/
 
 - **`enums.py`**: Defines camera angles and CPR modes
 - **`config.py`**: Contains all configuration constants, colors, and parameters
-- **`ui.py`**: Kivy-based user interface components
 
 ## Features
 
@@ -64,10 +62,9 @@ python main.py
 
 ## Usage
 
-The application offers two modes:
+The application offers one mode:
 
 1. **CPR Assistant (Computer Vision)**: Full computer vision-based CPR training
-2. **Kivy UI Application**: User interface for system control
 
 ### Controls (Computer Vision Mode)
 
@@ -103,7 +100,6 @@ The application offers two modes:
 1. **New Detection Methods**: Add to `detection.py`
 2. **Analysis Algorithms**: Extend `analysis.py`
 3. **Visualization**: Add to `visualization.py`
-4. **UI Components**: Extend `ui.py`
 
 ### Configuration
 
@@ -117,7 +113,6 @@ Modify `config.py` to adjust:
 
 - **OpenCV**: Computer vision processing
 - **MediaPipe**: Pose and hand detection
-- **Kivy**: User interface framework
 - **NumPy**: Numerical computations
 
 ## License

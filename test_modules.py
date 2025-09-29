@@ -40,13 +40,6 @@ def test_imports():
         except ImportError as e:
             print(f"⚠ visualization.py import failed (expected if dependencies missing): {e}")
         
-        # Test UI (may fail if Kivy not installed)
-        try:
-            from ui import CPRApp, LoginScreen
-            print("✓ ui.py imported successfully")
-        except ImportError as e:
-            print(f"⚠ ui.py import failed (expected if Kivy missing): {e}")
-        
         # Test main CPR assistant (may fail if dependencies missing)
         try:
             from cpr_assistant import AdvancedCPRAssistant

@@ -3,9 +3,6 @@ opencv-python>=4.8.0
 mediapipe>=0.10.0
 numpy>=1.21.0
 
-# UI dependencies
-kivy>=2.1.0
-
 # Optional dependencies for enhanced functionality
 # matplotlib>=3.5.0  # For data visualization
 # scipy>=1.9.0       # For advanced signal processing
