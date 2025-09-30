@@ -1,6 +1,9 @@
 import cv2
+import numpy as np
 import mediapipe as mp
 from config import HANDS_CONFIG, POSE_CONFIG, HOLISTIC_CONFIG, CHEST_LANDMARKS
+
+MatLike = np.typing.NDArray[np.uint8]
 
 class PoseDetector:
     """Handles pose detection and landmark extraction"""
