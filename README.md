@@ -8,7 +8,7 @@ The project has been refactored into a modular architecture:
 
 ```
 stayinalive/
-├── main.py                 # Main entry point with mode selection
+├── main.py                 # Original main entry point with mode selection (Being refactored)
 ├── cpr_assistant.py        # Main CPR assistant coordinator
 ├── detection.py            # Pose and hand detection modules
 ├── analysis.py             # CPR analysis algorithms
@@ -17,6 +17,7 @@ stayinalive/
 ├── config.py               # Configuration constants
 ├── requirements.txt        # Python dependencies
 ├── twoPhaseSolution.py     # Original monolithic implementation
+├── app.py                  # Kivy app implementation
 └── README.md              # This file
 ```
 
@@ -114,6 +115,7 @@ Modify `config.py` to adjust:
 - **OpenCV**: Computer vision processing
 - **MediaPipe**: Pose and hand detection
 - **NumPy**: Numerical computations
+- **Kivy**: Pythonic App Development Framework
 
 ## License
 
