@@ -1,5 +1,5 @@
-import cv2
 import math
+import cv2
 from enums import CameraAngle, CPRMode
 from config import TARGET_COMPRESSION_RATE, TARGET_DEPTH_CM
 from detection import PoseDetector, HandDetector, HolisticDetector, CameraManager
@@ -9,7 +9,7 @@ from visualization import CPRVisualizer
 class AdvancedCPRAssistant:
     """Main CPR Assistant class that coordinates all components"""
     
-    def __init__(self):
+    def __init__(self) -> None:
         # Initialize components
         self.pose_detector = PoseDetector()
         self.hand_detector = HandDetector()
@@ -35,13 +35,12 @@ class AdvancedCPRAssistant:
         print("Current Mode: OVERHEAD POSITIONING")
         self.print_controls()
     
-    def print_controls(self):
+    def print_controls(self) -> None:
         """Print current controls based on mode"""
         print("\n=== CONTROLS ===")
         if self.current_angle == CameraAngle.OVERHEAD:
             print("OVERHEAD MODE - Hand Positioning:")
             print("'1' - Switch to SIDE VIEW mode")
-            print("'c' - Calibrate chest detection")
             print("'s' - Start/Stop positioning guidance")
         else:
             print("SIDE VIEW MODE - Compression Monitoring:")
@@ -54,7 +53,7 @@ class AdvancedCPRAssistant:
         print("'q' - Quit")
         print("================\n")
     
-    def get_hand_center(self, landmarks, width, height):
+    def get_hand_center(self, landmarks, width, height) -> tuple[int, int]:
         """Get center point of hand landmarks"""
         x_coords = [lm.x * width for lm in landmarks.landmark]
         y_coords = [lm.y * height for lm in landmarks.landmark]
@@ -62,11 +61,11 @@ class AdvancedCPRAssistant:
         center_y = sum(y_coords) / len(y_coords)
         return (int(center_x), int(center_y))
     
-    def calculate_distance(self, point1, point2):
+    def calculate_distance(self, point1, point2) -> int:
         """Calculate Euclidean distance between two points"""
         return math.sqrt((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2)
     
-    def switch_angle(self, new_angle):
+    def switch_angle(self, new_angle) -> None:
         """Switch camera angle and mode"""
         if isinstance(new_angle, str):
             new_angle = CameraAngle(new_angle)
@@ -85,7 +84,7 @@ class AdvancedCPRAssistant:
         if new_angle == CameraAngle.SIDE_VIEW:
             self.analyzer.reset_baseline()
     
-    def emergency_call_simulation(self):
+    def emergency_call_simulation(self) -> None:
         """Simulate emergency call"""
         print("\n🚨 EMERGENCY CALL INITIATED 🚨")
         print("Calling emergency services...")
@@ -94,20 +93,18 @@ class AdvancedCPRAssistant:
             print(f"Current rate: {self.analyzer.current_rate:.0f}/min")
         print("Location: [GPS coordinates would be sent]")
     
-    def reset_counters(self):
+    def reset_counters(self) -> None:
         """Reset all counters and tracking"""
         self.analyzer.reset_counters()
         print("All counters reset")
     
-    def calibrate_current_mode(self):
+    def calibrate_current_mode(self) -> None:
         """Calibrate based on current mode"""
         if self.current_angle == CameraAngle.SIDE_VIEW:
             self.analyzer.reset_baseline()
             print("Compression baseline reset - position for new baseline")
-        else:
-            print("Overhead mode auto-calibrates using pose detection")
     
-    def run(self):
+    def run(self) -> None:
         """Main application loop"""
         guidance_active = False
         
@@ -184,7 +181,7 @@ class AdvancedCPRAssistant:
         
         self.cleanup()
     
-    def cleanup(self):
+    def cleanup(self) -> None:
         """Clean up resources"""
         self.camera_manager.release()
         cv2.destroyAllWindows()
