@@ -52,7 +52,7 @@ class CPRVisualizer:
             cv2.putText(frame, line, (10, y_pos), 
                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, self.colors['white'], 2)
     
-    def draw_mode_indicator(self, frame, current_angle, guidance_active) -> None:
+    def draw_mode_indicator(self, frame, current_angle) -> None:
         """Draw mode and status indicators"""
         # Draw mode indicator
         mode_text = f"Mode: {current_angle.value.upper()}"
@@ -60,8 +60,8 @@ class CPRVisualizer:
                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, self.colors['yellow'], 2)
         
         # Draw status
-        status = "ACTIVE" if guidance_active else "INACTIVE"
-        status_color = self.colors['green'] if guidance_active else self.colors['red']
+        status = "ACTIVE"
+        status_color = self.colors['green']
         cv2.putText(frame, f"Status: {status}", (frame.shape[1] - 200, 70), 
                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, status_color, 2)
     
