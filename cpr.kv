@@ -1,0 +1,27 @@
+#:kivy 2.3.1
+# cpr.kv - Kivy styling for CPR Assistant
+
+<Button>:
+    font_size: '14sp'
+    bold: True
+    background_normal: ''
+    background_color: 0.3, 0.3, 0.3, 1
+
+<ToggleButton>:
+    font_size: '16sp'
+    bold: True
+    background_normal: ''
+    background_color: 0.3, 0.3, 0.3, 1
+    background_down: ''
+    state_color: 0.2, 0.8, 0.2, 1
+
+<Label>:
+    color: 1, 1, 1, 1
+
+<CPRControlPanel>:
+    canvas.before:
+        Color:
+            rgba: 0.1, 0.1, 0.15, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size

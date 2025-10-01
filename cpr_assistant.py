@@ -22,6 +22,9 @@ class AdvancedCPRAssistant:
         self.current_angle = CameraAngle.OVERHEAD
         self.current_mode = CPRMode.POSITIONING
         
+        # UI feedback cache
+        self.last_feedback = "Position CPR recipient in frame"
+        
         # CPR parameters
         self.target_compression_rate = TARGET_COMPRESSION_RATE
         self.target_depth_cm = TARGET_DEPTH_CM
@@ -146,8 +149,15 @@ class AdvancedCPRAssistant:
                 
         # Draw feedback
         self.visualizer.draw_feedback(frame, feedback)
+        
+        # Store latest feedback for UI
+        self.last_feedback = feedback
             
         # Draw mode and status indicators
         self.visualizer.draw_mode_indicator(frame, self.current_angle)
 
         return frame
+
+    def cleanup(self) -> None:
+        """Release resources when closing the app"""
+        self.camera_manager.release()
