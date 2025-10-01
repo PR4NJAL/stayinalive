@@ -17,6 +17,7 @@ stayinalive/
 ├── config.py               # Configuration constants
 ├── requirements.txt        # Python dependencies
 ├── twoPhaseSolution.py     # Original monolithic implementation
+├── cpr.kv                  # Additional structure to kivy app
 ├── app.py                  # Kivy app implementation
 └── README.md              # This file
 ```
@@ -66,16 +67,6 @@ python main.py
 The application offers one mode:
 
 1. **CPR Assistant (Computer Vision)**: Full computer vision-based CPR training
-
-### Controls (Computer Vision Mode)
-
-- `1`: Switch to overhead mode
-- `2`: Switch to side view mode
-- `s`: Start/stop guidance
-- `c`: Calibrate current mode
-- `r`: Reset all counters
-- `e`: Emergency call simulation
-- `q`: Quit
 
 ## Architecture Benefits
 
