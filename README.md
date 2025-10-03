@@ -8,7 +8,7 @@ The project has been refactored into a modular architecture:
 
 ```
 stayinalive/
-├── main.py                 # Main entry point with mode selection
+├── main.py                 # Original main entry point with mode selection (Being refactored)
 ├── cpr_assistant.py        # Main CPR assistant coordinator
 ├── detection.py            # Pose and hand detection modules
 ├── analysis.py             # CPR analysis algorithms
@@ -17,6 +17,8 @@ stayinalive/
 ├── config.py               # Configuration constants
 ├── requirements.txt        # Python dependencies
 ├── twoPhaseSolution.py     # Original monolithic implementation
+├── cpr.kv                  # Additional structure to kivy app
+├── app.py                  # Kivy app implementation
 └── README.md              # This file
 ```
 
@@ -66,16 +68,6 @@ The application offers one mode:
 
 1. **CPR Assistant (Computer Vision)**: Full computer vision-based CPR training
 
-### Controls (Computer Vision Mode)
-
-- `1`: Switch to overhead mode
-- `2`: Switch to side view mode
-- `s`: Start/stop guidance
-- `c`: Calibrate current mode
-- `r`: Reset all counters
-- `e`: Emergency call simulation
-- `q`: Quit
-
 ## Architecture Benefits
 
 ### Modularity
@@ -114,6 +106,7 @@ Modify `config.py` to adjust:
 - **OpenCV**: Computer vision processing
 - **MediaPipe**: Pose and hand detection
 - **NumPy**: Numerical computations
+- **Kivy**: Pythonic App Development Framework
 
 ## License
 

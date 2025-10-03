@@ -9,7 +9,7 @@ import os
 # Add current directory to path for imports
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-def test_imports():
+def test_imports() -> bool:
     """Test that all modules can be imported"""
     try:
         print("Testing module imports...")
@@ -56,7 +56,7 @@ def test_imports():
     
     return True
 
-def test_basic_functionality():
+def test_basic_functionality() -> bool:
     """Test basic functionality of imported modules"""
     try:
         print("\nTesting basic functionality...")
@@ -85,7 +85,7 @@ def test_basic_functionality():
     
     return True
 
-def main():
+def main() -> None:
     """Run all tests"""
     print("🧪 CPR Assistant - Module Tests")
     print("=" * 40)

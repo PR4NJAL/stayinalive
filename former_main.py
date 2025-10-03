@@ -6,7 +6,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from cpr_assistant import AdvancedCPRAssistant
 
-def run_cpr_assistant():
+def run_cpr_assistant() -> None:
     """Run the CPR assistant application"""
     try:
         assistant = AdvancedCPRAssistant()
@@ -26,7 +26,7 @@ if __name__ == '__main__':
         import mediapipe as mp
     except ImportError as e:
         print("Missing required packages. Please install:")
-        print("pip install opencv-python mediapipe")
+        print("opencv-python mediapipe")
         sys.exit(1)
         
     run_cpr_assistant()

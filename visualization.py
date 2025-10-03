@@ -4,10 +4,10 @@ from config import COLORS
 class CPRVisualizer:
     """Handles all visualization and drawing operations"""
     
-    def __init__(self):
+    def __init__(self) -> None:
         self.colors = COLORS
     
-    def draw_overhead_overlay(self, frame, holistic_results, pose_results, detected_chest_center, chest_width, positioning_accuracy, get_hand_center_func):
+    def draw_overhead_overlay(self, frame, holistic_results, pose_results, detected_chest_center, chest_width, positioning_accuracy, get_hand_center_func) -> None:
         """Draw overlay for overhead positioning mode"""
         if holistic_results and holistic_results.pose_landmarks:
             # Draw pose landmarks (torso area)
@@ -21,7 +21,7 @@ class CPRVisualizer:
         if holistic_results:
             self._draw_hand_positioning(frame, holistic_results, detected_chest_center, positioning_accuracy, get_hand_center_func)
     
-    def draw_side_view_overlay(self, frame, hands_results, pose_results, baseline_chest_y, current_rate, compression_count, average_depth, get_hand_center_func):
+    def draw_side_view_overlay(self, frame, hands_results, pose_results, baseline_chest_y, current_rate, compression_count, average_depth, get_hand_center_func) -> None:
         """Draw overlay for side view compression mode"""
         # Draw pose landmarks
         if pose_results and pose_results.pose_landmarks:
@@ -34,7 +34,7 @@ class CPRVisualizer:
         # Draw compression metrics
         self._draw_compression_metrics(frame, current_rate, compression_count, average_depth)
     
-    def draw_feedback(self, frame, feedback_text):
+    def draw_feedback(self, frame, feedback_text) -> None:
         """Draw feedback text on frame"""
         height, width = frame.shape[:2]
         
@@ -52,7 +52,7 @@ class CPRVisualizer:
             cv2.putText(frame, line, (10, y_pos), 
                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, self.colors['white'], 2)
     
-    def draw_mode_indicator(self, frame, current_angle, guidance_active):
+    def draw_mode_indicator(self, frame, current_angle) -> None:
         """Draw mode and status indicators"""
         # Draw mode indicator
         mode_text = f"Mode: {current_angle.value.upper()}"
@@ -60,12 +60,12 @@ class CPRVisualizer:
                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, self.colors['yellow'], 2)
         
         # Draw status
-        status = "ACTIVE" if guidance_active else "INACTIVE"
-        status_color = self.colors['green'] if guidance_active else self.colors['red']
+        status = "ACTIVE"
+        status_color = self.colors['green']
         cv2.putText(frame, f"Status: {status}", (frame.shape[1] - 200, 70), 
                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, status_color, 2)
     
-    def _draw_pose_landmarks(self, frame, pose_landmarks):
+    def _draw_pose_landmarks(self, frame, pose_landmarks) -> None:
         """Draw pose landmarks on frame"""
         import mediapipe as mp
         mp_draw = mp.solutions.drawing_utils
@@ -78,7 +78,7 @@ class CPRVisualizer:
             connection_drawing_spec=mp_draw.DrawingSpec(color=(0, 255, 255), thickness=1)
         )
     
-    def _draw_chest_target_zone(self, frame, detected_chest_center, chest_width):
+    def _draw_chest_target_zone(self, frame, detected_chest_center, chest_width) -> None:
         """Draw chest target zone"""
         chest_x, chest_y = detected_chest_center
         
@@ -96,7 +96,7 @@ class CPRVisualizer:
                    (chest_x - 50, chest_y + target_radius + 30), 
                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, self.colors['yellow'], 2)
     
-    def _draw_hand_positioning(self, frame, holistic_results, detected_chest_center, positioning_accuracy, get_hand_center_func):
+    def _draw_hand_positioning(self, frame, holistic_results, detected_chest_center, positioning_accuracy, get_hand_center_func) -> None:
         """Draw hand positioning visualization"""
         import mediapipe as mp
         mp_draw = mp.solutions.drawing_utils
@@ -132,7 +132,7 @@ class CPRVisualizer:
             if detected_chest_center:
                 cv2.line(frame, hand_center, detected_chest_center, color, 2)
     
-    def _draw_compression_visualization(self, frame, hands_results, baseline_chest_y, get_hand_center_func):
+    def _draw_compression_visualization(self, frame, hands_results, baseline_chest_y, get_hand_center_func) -> None:
         """Draw compression visualization for side view"""
         import mediapipe as mp
         mp_draw = mp.solutions.drawing_utils
@@ -167,7 +167,7 @@ class CPRVisualizer:
                 cv2.putText(frame, "BASELINE", (10, baseline_chest_y - 10), 
                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, self.colors['blue'], 1)
     
-    def _draw_compression_metrics(self, frame, current_rate, compression_count, average_depth):
+    def _draw_compression_metrics(self, frame, current_rate, compression_count, average_depth) -> None:
         """Draw compression metrics on frame"""
         cv2.putText(frame, f"Rate: {current_rate:.0f}/min", 
                    (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.8, self.colors['white'], 2)

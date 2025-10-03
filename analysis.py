@@ -5,7 +5,7 @@ from config import TARGET_COMPRESSION_RATE, TARGET_DEPTH_CM
 class CPRAnalyzer:
     """Handles CPR analysis and feedback generation"""
     
-    def __init__(self):
+    def __init__(self) -> None:
         # Tracking for overhead mode (positioning)
         self.detected_chest_center = None
         self.chest_width = None
@@ -22,7 +22,7 @@ class CPRAnalyzer:
         self.is_compressing = False
         self.baseline_chest_y = None  # Chest position when not compressed
     
-    def analyze_hand_positioning_overhead(self, holistic_results, pose_results, frame_shape, get_hand_center_func, calculate_distance_func):
+    def analyze_hand_positioning_overhead(self, holistic_results, pose_results, frame_shape, get_hand_center_func, calculate_distance_func) -> str:
         """Analyze hand positioning from overhead view"""
         if not holistic_results or not holistic_results.pose_landmarks:
             return "No person detected - position CPR recipient in frame"
@@ -85,7 +85,7 @@ class CPRAnalyzer:
         
         return "Position hands over chest"
     
-    def analyze_compression_side_view(self, hands_results, pose_results, frame_shape, get_hand_center_func):
+    def analyze_compression_side_view(self, hands_results, pose_results, frame_shape, get_hand_center_func) -> str:
         """Analyze compression from side view"""
         if not pose_results or not pose_results.pose_landmarks:
             return "No person detected in side view"
@@ -150,7 +150,7 @@ class CPRAnalyzer:
         
         return " | ".join(feedback)
     
-    def detect_chest_from_pose(self, pose_landmarks, frame_shape):
+    def detect_chest_from_pose(self, pose_landmarks, frame_shape) -> tuple[tuple[int, int], int]:
         """Detect chest center from pose landmarks"""
         if not pose_landmarks:
             return None, None
@@ -171,7 +171,7 @@ class CPRAnalyzer:
         
         return (chest_center_x, chest_center_y), chest_width
     
-    def detect_compression_side_view(self, hand_center, chest_ref_y):
+    def detect_compression_side_view(self, hand_center, chest_ref_y) -> None:
         """Detect compression from side view using vertical movement"""
         current_time = time.time()
         current_y = hand_center[1]
@@ -212,7 +212,7 @@ class CPRAnalyzer:
                 'hand_y': current_y
             })
     
-    def reset_counters(self):
+    def reset_counters(self) -> None:
         """Reset all counters and tracking"""
         self.compression_count = 0
         self.compression_times.clear()
@@ -222,7 +222,7 @@ class CPRAnalyzer:
         self.average_depth = 0
         self.positioning_accuracy = 0
     
-    def reset_baseline(self):
+    def reset_baseline(self) -> None:
         """Reset compression baseline"""
         self.baseline_chest_y = None
         self.compression_history.clear()

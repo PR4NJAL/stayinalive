@@ -18,7 +18,7 @@ from detection import PoseDetector, HandDetector, CameraManager
 from analysis import CPRAnalyzer
 from visualization import CPRVisualizer
 
-def example_enum_usage():
+def example_enum_usage() -> None:
     """Demonstrate enum usage"""
     print("=== Enum Usage Example ===")
     
@@ -34,7 +34,7 @@ def example_enum_usage():
     print(f"Positioning mode: {positioning.value}")
     print(f"Compression mode: {compression.value}")
 
-def example_config_usage():
+def example_config_usage() -> None:
     """Demonstrate configuration usage"""
     print("\n=== Configuration Usage Example ===")
     
@@ -42,7 +42,7 @@ def example_config_usage():
     print(f"Available colors: {list(COLORS.keys())}")
     print(f"Green color (BGR): {COLORS['green']}")
 
-def example_detection_usage():
+def example_detection_usage() -> None:
     """Demonstrate detection component usage"""
     print("\n=== Detection Components Example ===")
     
@@ -56,7 +56,7 @@ def example_detection_usage():
     # Note: In a real application, you would process frames here
     print("(Frame processing would happen here)")
 
-def example_analysis_usage():
+def example_analysis_usage() -> None:
     """Demonstrate analysis component usage"""
     print("\n=== Analysis Component Example ===")
     
@@ -71,7 +71,7 @@ def example_analysis_usage():
     analyzer.reset_baseline()
     print("Baseline reset")
 
-def example_visualization_usage():
+def example_visualization_usage() -> None:
     """Demonstrate visualization component usage"""
     print("\n=== Visualization Component Example ===")
     
@@ -79,7 +79,7 @@ def example_visualization_usage():
     print("CPR visualizer initialized")
     print(f"Available colors: {list(visualizer.colors.keys())}")
 
-def example_camera_usage():
+def example_camera_usage() -> None:
     """Demonstrate camera management"""
     print("\n=== Camera Management Example ===")
     
@@ -97,7 +97,7 @@ def example_camera_usage():
         print(f"Camera initialization failed: {e}")
         print("(This is expected if no camera is available)")
 
-def main():
+def main() -> None:
     """Run all examples"""
     print("🫀 CPR Assistant - Modular Components Example")
     print("=" * 50)

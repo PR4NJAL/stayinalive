@@ -1,5 +1,5 @@
-import cv2
 import math
+import cv2
 from enums import CameraAngle, CPRMode
 from config import TARGET_COMPRESSION_RATE, TARGET_DEPTH_CM
 from detection import PoseDetector, HandDetector, HolisticDetector, CameraManager
@@ -9,7 +9,7 @@ from visualization import CPRVisualizer
 class AdvancedCPRAssistant:
     """Main CPR Assistant class that coordinates all components"""
     
-    def __init__(self):
+    def __init__(self) -> None:
         # Initialize components
         self.pose_detector = PoseDetector()
         self.hand_detector = HandDetector()
@@ -21,6 +21,9 @@ class AdvancedCPRAssistant:
         # Current mode and angle
         self.current_angle = CameraAngle.OVERHEAD
         self.current_mode = CPRMode.POSITIONING
+        
+        # UI feedback cache
+        self.last_feedback = "Position CPR recipient in frame"
         
         # CPR parameters
         self.target_compression_rate = TARGET_COMPRESSION_RATE
@@ -35,13 +38,12 @@ class AdvancedCPRAssistant:
         print("Current Mode: OVERHEAD POSITIONING")
         self.print_controls()
     
-    def print_controls(self):
+    def print_controls(self) -> None:
         """Print current controls based on mode"""
         print("\n=== CONTROLS ===")
         if self.current_angle == CameraAngle.OVERHEAD:
             print("OVERHEAD MODE - Hand Positioning:")
             print("'1' - Switch to SIDE VIEW mode")
-            print("'c' - Calibrate chest detection")
             print("'s' - Start/Stop positioning guidance")
         else:
             print("SIDE VIEW MODE - Compression Monitoring:")
@@ -54,7 +56,7 @@ class AdvancedCPRAssistant:
         print("'q' - Quit")
         print("================\n")
     
-    def get_hand_center(self, landmarks, width, height):
+    def get_hand_center(self, landmarks, width, height) -> tuple[int, int]:
         """Get center point of hand landmarks"""
         x_coords = [lm.x * width for lm in landmarks.landmark]
         y_coords = [lm.y * height for lm in landmarks.landmark]
@@ -62,11 +64,11 @@ class AdvancedCPRAssistant:
         center_y = sum(y_coords) / len(y_coords)
         return (int(center_x), int(center_y))
     
-    def calculate_distance(self, point1, point2):
+    def calculate_distance(self, point1, point2) -> int:
         """Calculate Euclidean distance between two points"""
         return math.sqrt((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2)
     
-    def switch_angle(self, new_angle):
+    def switch_angle(self, new_angle) -> None:
         """Switch camera angle and mode"""
         if isinstance(new_angle, str):
             new_angle = CameraAngle(new_angle)
@@ -85,7 +87,7 @@ class AdvancedCPRAssistant:
         if new_angle == CameraAngle.SIDE_VIEW:
             self.analyzer.reset_baseline()
     
-    def emergency_call_simulation(self):
+    def emergency_call_simulation(self) -> None:
         """Simulate emergency call"""
         print("\n🚨 EMERGENCY CALL INITIATED 🚨")
         print("Calling emergency services...")
@@ -94,98 +96,68 @@ class AdvancedCPRAssistant:
             print(f"Current rate: {self.analyzer.current_rate:.0f}/min")
         print("Location: [GPS coordinates would be sent]")
     
-    def reset_counters(self):
+    def reset_counters(self) -> None:
         """Reset all counters and tracking"""
         self.analyzer.reset_counters()
         print("All counters reset")
     
-    def calibrate_current_mode(self):
+    def calibrate_current_mode(self) -> None:
         """Calibrate based on current mode"""
         if self.current_angle == CameraAngle.SIDE_VIEW:
             self.analyzer.reset_baseline()
             print("Compression baseline reset - position for new baseline")
-        else:
-            print("Overhead mode auto-calibrates using pose detection")
     
     def run(self):
         """Main application loop"""
-        guidance_active = False
-        
-        while True:
-            ret, frame = self.camera_manager.read_frame()
-            if not ret:
-                print("Failed to grab frame")
-                break
+        _, frame = self.camera_manager.read_frame()
+                        
+        # Flip frame for mirror effect
+        frame = cv2.flip(frame, 1)
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             
-            # Flip frame for mirror effect
-            frame = cv2.flip(frame, 1)
-            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            
-            # Process frame based on current mode
-            if guidance_active:
-                if self.current_angle == CameraAngle.OVERHEAD:
-                    # Use holistic for both pose and hands
-                    holistic_results = self.holistic_detector.process_frame(frame_rgb)
+        # Process frame based on current mode
+        if self.current_angle == CameraAngle.OVERHEAD:
+            # Use holistic for both pose and hands
+            holistic_results = self.holistic_detector.process_frame(frame_rgb)
                     
-                    # Analyze positioning
-                    feedback = self.analyzer.analyze_hand_positioning_overhead(
-                        holistic_results, holistic_results, frame.shape,
-                        self.get_hand_center, self.calculate_distance)
+            # Analyze positioning
+            feedback = self.analyzer.analyze_hand_positioning_overhead(
+                holistic_results, holistic_results, frame.shape,
+                self.get_hand_center, self.calculate_distance)
                     
-                    # Draw overlay
-                    self.visualizer.draw_overhead_overlay(
-                        frame, holistic_results, holistic_results,
-                        self.analyzer.detected_chest_center, self.analyzer.chest_width,
-                        self.analyzer.positioning_accuracy, self.get_hand_center)
+            # Draw overlay
+            self.visualizer.draw_overhead_overlay(
+                frame, holistic_results, holistic_results,
+                self.analyzer.detected_chest_center, self.analyzer.chest_width,
+                self.analyzer.positioning_accuracy, self.get_hand_center)
                     
-                else:  # SIDE_VIEW
-                    # Process hands and pose separately for better performance
-                    hands_results = self.hand_detector.process_frame(frame_rgb)
-                    pose_results = self.pose_detector.process_frame(frame_rgb)
+        else:  # SIDE_VIEW
+            # Process hands and pose separately for better performance
+            hands_results = self.hand_detector.process_frame(frame_rgb)
+            pose_results = self.pose_detector.process_frame(frame_rgb)
                     
-                    # Analyze compressions
-                    feedback = self.analyzer.analyze_compression_side_view(
-                        hands_results, pose_results, frame.shape, self.get_hand_center)
+            # Analyze compressions
+            feedback = self.analyzer.analyze_compression_side_view(
+            hands_results, pose_results, frame.shape, self.get_hand_center)
                     
-                    # Draw overlay
-                    self.visualizer.draw_side_view_overlay(
-                        frame, hands_results, pose_results,
-                        self.analyzer.baseline_chest_y, self.analyzer.current_rate,
-                        self.analyzer.compression_count, self.analyzer.average_depth,
-                        self.get_hand_center)
+            # Draw overlay
+            self.visualizer.draw_side_view_overlay(
+                frame, hands_results, pose_results,
+                self.analyzer.baseline_chest_y, self.analyzer.current_rate,
+                self.analyzer.compression_count, self.analyzer.average_depth,
+                self.get_hand_center)
                 
-                # Draw feedback
-                self.visualizer.draw_feedback(frame, feedback)
-            
-            # Draw mode and status indicators
-            self.visualizer.draw_mode_indicator(frame, self.current_angle, guidance_active)
-            
-            # Show frame
-            cv2.imshow('Advanced CPR Assistant', frame)
-            
-            # Handle key presses
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord('q'):
-                break
-            elif key == ord('1'):
-                self.switch_angle(CameraAngle.OVERHEAD)
-            elif key == ord('2'):
-                self.switch_angle(CameraAngle.SIDE_VIEW)
-            elif key == ord('s'):
-                guidance_active = not guidance_active
-                status = "ACTIVE" if guidance_active else "INACTIVE"
-                print(f"\nGuidance: {status}")
-            elif key == ord('e'):
-                self.emergency_call_simulation()
-            elif key == ord('r'):
-                self.reset_counters()
-            elif key == ord('c'):
-                self.calibrate_current_mode()
+        # Draw feedback
+        self.visualizer.draw_feedback(frame, feedback)
         
-        self.cleanup()
-    
-    def cleanup(self):
-        """Clean up resources"""
+        # Store latest feedback for UI
+        self.last_feedback = feedback
+            
+        # Draw mode and status indicators
+        self.visualizer.draw_mode_indicator(frame, self.current_angle)
+
+        return frame
+
+    def cleanup(self) -> None:
+        """Release resources when closing the app"""
         self.camera_manager.release()
-        cv2.destroyAllWindows()
-        print("CPR Assistant shutdown complete")
